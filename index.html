@@ -4858,5 +4858,31 @@ function toast(msg) {
 })();
 
 </script>
+<style>
+#gate{position:fixed;inset:0;z-index:2147483647;background:#E4E1DD;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .6s ease}
+#gate.out{opacity:0;pointer-events:none}
+#gate form{width:100%;max-width:320px;text-align:center}
+#gate h1{font-family:'Averia Serif Libre',serif;font-weight:400;font-size:26px;letter-spacing:.14em;text-transform:uppercase;color:#141414;margin:0 0 6px}
+#gate p{font-family:Satoshi,sans-serif;font-size:14px;color:#55524F;margin:0 0 28px}
+#gate input{width:100%;box-sizing:border-box;font:400 15px Satoshi,sans-serif;color:#141414;background:#F2F0EE;border:1px solid #CFCAC4;border-radius:6px;padding:13px 16px;outline:none;text-align:center}
+#gate input:focus{border-color:#9B5664}
+#gate button{margin-top:14px;font:500 12px Satoshi,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#F2F0EE;background:#9B5664;border:0;border-radius:6px;padding:13px 44px;cursor:pointer}
+#gate .err{min-height:20px;margin:14px 0 0;color:#9B5664}
+#gate.shake form{animation:gshake .4s}
+@keyframes gshake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+</style>
+<div id="gate"><form autocomplete="off"><h1>Enfold Journal</h1><p>Enter the password to view the prototype</p><input type="password" aria-label="Password" placeholder="Password" autofocus><button type="submit">Enter</button><p class="err"></p></form></div>
+<script>(function(){
+var K='3df84435d4f5f838238ec55cac95303d6cce4d84f700b64382a0f50b72c43fbb',g=document.getElementById('gate');
+function open(){g.classList.add('out');setTimeout(function(){g.remove()},700)}
+try{if(localStorage.getItem('enfold-gate')===K){g.remove();return}}catch(e){}
+g.querySelector('form').addEventListener('submit',function(e){e.preventDefault();
+ var v=g.querySelector('input').value.trim();
+ crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(function(b){
+  var h=Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('');
+  if(h===K){try{localStorage.setItem('enfold-gate',K)}catch(e){}open()}
+  else{g.querySelector('.err').textContent='That password isn’t right';g.classList.remove('shake');void g.offsetWidth;g.classList.add('shake')}
+ })})
+})()</script>
 </body>
 </html>
